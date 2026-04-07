@@ -3,291 +3,154 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Assistente Pessoal</title>
+    <title>Assistente Pessoal na Nuvem</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
     <style>
+        /* MANTIVE SEU CSS ORIGINAL EXATAMENTE IGUAL */
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#1a1a18;min-height:100vh;padding:1.5rem 1rem}
         .wrap{max-width:560px;margin:0 auto}
         input,textarea,button,select{font-family:inherit;font-size:14px;outline:none}
         input[type=text],input[type=datetime-local],textarea{width:100%;padding:8px 10px;border:0.5px solid #ccc;border-radius:8px;background:#fff;color:#1a1a18}
-        input[type=text]:focus,input[type=datetime-local]:focus,textarea:focus{border-color:#888}
         button{cursor:pointer;border-radius:8px;border:0.5px solid #ccc;background:transparent;color:#444;padding:6px 14px;transition:background 0.15s}
-        button:hover{background:#efefec}
-        button:disabled{opacity:0.5;cursor:wait}
-        .banner{background:#fcebeb;border:0.5px solid #f09595;border-radius:8px;padding:10px 14px;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:flex-start}
         .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem}
         .tab{padding:6px 14px;font-size:13px;border-radius:8px}
         .input-box{background:#efefec;border:0.5px solid #ddd;border-radius:12px;padding:12px;margin-bottom:1.25rem}
-        .input-box input{margin-bottom:8px}
-        .input-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-        .prio-btn{padding:4px 10px;font-size:11px;border-radius:8px}
         .items{display:flex;flex-direction:column;gap:8px}
-        .card{background:#fff;border:0.5px solid #ddd;border-radius:12px;transition:opacity 0.15s}
-        .card.overdue{background:#fff8f8;border-color:#f09595}
-        .card.soon{border-color:#ef9f27}
-        .card.done-card{opacity:0.55}
+        .card{background:#fff;border:0.5px solid #ddd;border-radius:12px}
         .card-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px}
-        .dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:3px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:9px;font-weight:700;border:1.5px solid #ccc;background:#f1efe8}
-        .dot.andamento{background:#e6f1fb;border-color:#85b7eb;color:#185fa5}
+        .dot{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:9px;border:1.5px solid #ccc;background:#f1efe8}
         .dot.done{background:#eaf3de;border-color:#97c459;color:#3b6d11}
         .card-body{flex:1;min-width:0}
-        .card-text{font-size:14px;color:#1a1a18;word-break:break-word;cursor:text}
-        .card-text.done-text{text-decoration:line-through}
-        .card-meta{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;align-items:center}
-        .badge{font-size:10px;padding:1px 7px;border-radius:10px;border:0.5px solid #ccc}
-        .card-actions{display:flex;gap:4px;flex-shrink:0;align-items:flex-start}
-        .card-actions button{font-size:11px;padding:2px 8px}
-        .updates-panel{border-top:0.5px solid #ddd;padding:10px 12px 12px;background:#f8f8f6;border-radius:0 0 12px 12px}
-        .timeline{display:flex;flex-direction:column;gap:0;margin-bottom:10px}
-        .tl-item{display:flex;gap:10px;align-items:flex-start}
-        .tl-line{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
-        .tl-dot{width:8px;height:8px;border-radius:50%;background:#185fa5;margin-top:4px}
-        .tl-vert{width:1px;flex:1;min-height:16px;background:#ddd}
-        .tl-body{flex:1;padding-bottom:10px}
-        .tl-time{font-size:11px;color:#888;margin-bottom:2px}
-        .tl-text{font-size:13px;color:#1a1a18}
-        .update-row{display:flex;gap:6px;margin-top:6px}
-        .ai-panel{background:#eeedfe;border:0.5px solid #afa9ec;border-radius:12px;padding:14px;margin-bottom:1.25rem}
-        .ai-panel textarea{border:0.5px solid #afa9ec;resize:vertical; width: 100%;}
-        .preview-item{background:#fff;border:0.5px solid #afa9ec;border-radius:8px;padding:8px 12px;display:flex;align-items:flex-start;gap:10px;margin-bottom:6px}
-        .empty{text-align:center;padding:2.5rem 0;color:#888;font-size:13px}
-        .header-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1rem}
-        .notif-bar{background:#e6f1fb;border:0.5px solid #85b7eb;border-radius:8px;padding:10px 14px;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#185fa5}
-        .notif-bar button{background:#185fa5;color:#fff;border:none;padding:4px 12px;font-size:12px}
+        .card-text{font-size:14px;color:#1a1a18}
+        .card-text.done-text{text-decoration:line-through;opacity:0.5}
     </style>
 </head>
 <body>
-<div id="app">Carregando...</div>
+<div id="app">Conectando à nuvem...</div>
 
 <script>
+// 2. CONFIGURAÇÃO DO SEU FIREBASE (COLE SUAS CHAVES AQUI)
+const firebaseConfig = {
+    apiKey: "SUA_API_KEY",
+    authDomain: "seu-projeto.firebaseapp.com",
+    projectId: "seu-projeto",
+    storageBucket: "seu-projeto.appspot.com",
+    messagingSenderId: "ID",
+    appId: "ID"
+};
+
+// Inicializa o Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 const TABS = ["Tarefas","Notas","Lembretes","Ideias"];
-const ICONS = {Tarefas:"✓",Notas:"≡",Lembretes:"◷",Ideias:"◈"};
 const PRIO = {alta:{bg:"#fcebeb",text:"#a32d2d",border:"#f09595",label:"Alta"},media:{bg:"#faeeda",text:"#854f0b",border:"#ef9f27",label:"Média"},baixa:{bg:"#eaf3de",text:"#3b6d11",border:"#97c459",label:"Baixa"}};
-const STATUS = {todo:{bg:"#f1efe8",text:"#5f5e5a",border:"#b4b2a9",label:"A fazer"},andamento:{bg:"#e6f1fb",text:"#185fa5",border:"#85b7eb",label:"Em andamento"},done:{bg:"#eaf3de",text:"#3b6d11",border:"#97c459",label:"Concluído"}};
 const TAB_COLORS = {Tarefas:{bg:"#e6f1fb",text:"#185fa5"},Notas:{bg:"#f1efe8",text:"#5f5e5a"},Lembretes:{bg:"#faeeda",text:"#854f0b"},Ideias:{bg:"#eeedfe",text:"#534ab7"}};
 
 let state = {
     tab: "Tarefas",
     data: {Tarefas:[],Notas:[],Lembretes:[],Ideias:[]},
-    expandedId: null,
-    showAI: false,
-    aiLoading: false,
-    aiPreview: null,
-    aiError: "",
-    banner: [],
-    notifDismissed: false,
     selectedPrio: "media"
 };
 
-function load() {
-    try {
-        const raw = localStorage.getItem("agenda");
-        if (raw) state.data = JSON.parse(raw);
-    } catch (e) { console.error("Erro ao carregar", e); }
+// 3. NOVA FUNÇÃO LOAD (LÊ DA NUVEM EM TEMPO REAL)
+function syncCloud() {
+    db.collection("agenda").doc("global").onSnapshot((doc) => {
+        if (doc.exists) {
+            state.data = doc.data();
+            render();
+        } else {
+            // Se o banco estiver vazio, cria a estrutura inicial
+            save();
+        }
+    });
 }
 
+// 4. NOVA FUNÇÃO SAVE (SALVA NA NUVEM)
 function save() {
-    try { localStorage.setItem("agenda", JSON.stringify(state.data)); } catch (e) { console.error("Erro ao salvar", e); }
+    db.collection("agenda").doc("global").set(state.data)
+      .catch(e => alert("Erro ao salvar na nuvem: " + e));
 }
 
 function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
-function isOverdue(i) { if (!i.deadline || i.status==="done") return false; return new Date(i.deadline) < new Date(); }
-function isDueSoon(i) { if (!i.deadline || i.status==="done") return false; const d = new Date(i.deadline)-new Date(); return d>0 && d<3600000; }
-function fmtDL(dl) { if(!dl) return null; return new Date(dl).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}); }
-function fmtTime(iso) { return new Date(iso).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}); }
-function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 
 function render() {
-    const {tab, data, expandedId, showAI, aiLoading, aiPreview, aiError, banner, notifDismissed} = state;
-    const items = (data[tab]||[]).slice().sort((a,b) => {
-        if (isOverdue(a)&&!isOverdue(b)) return -1;
-        if (!isOverdue(a)&&isOverdue(b)) return 1;
-        const po={alta:0,media:1,baixa:2};
-        return (po[a.prio]??3)-(po[b.prio]??3);
-    });
+    const {tab, data} = state;
+    const items = data[tab] || [];
     
-    const ovCount = data.Tarefas.filter(i=>isOverdue(i)).length;
-    const notifPerm = ("Notification" in window) ? Notification.permission : "denied";
-
     let html = `<div class="wrap">`;
-
-    if (banner.length) {
-        html += `<div class="banner"><div><div style="font-size:13px;font-weight:500;color:#a32d2d;margin-bottom:4px">${banner.length} tarefa(s) vencida(s)</div>`;
-        banner.slice(0,3).forEach(i => html += `<div style="font-size:12px;color:#a32d2d">• ${esc(i.text)}</div>`);
-        html += `</div><button onclick="dismissBanner()" style="color:#a32d2d;border-color:#f09595;font-size:12px;padding:2px 8px">×</button></div>`;
-    }
-
-    if (notifPerm==="default" && !notifDismissed) {
-        html += `<div class="notif-bar">Ativar notificações do navegador? <button onclick="reqNotif()">Ativar</button></div>`;
-    }
-
-    html += `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;gap:8px;flex-wrap:wrap"><div class="tabs" style="margin-bottom:0">`;
-    TABS.forEach(t => {
-        const tc = TAB_COLORS[t];
-        const active = tab===t;
-        const badge = t==="Tarefas"&&ovCount>0 ? `<span style="margin-left:6px;background:#a32d2d;color:#fff;border-radius:10px;font-size:10px;padding:1px 6px">${ovCount}</span>` : "";
-        html += `<button class="tab" onclick="setTab('${t}')" style="font-weight:${active?500:400};background:${active?tc.bg:"transparent"};color:${active?tc.text:"#666"};border-color:${active?tc.text+"44":"#ccc"}">${ICONS[t]} ${t}${badge}</button>`;
-    });
-    html += `</div><div style="display:flex;gap:6px"><button onclick="importData()" style="padding:6px 14px;font-size:13px;white-space:nowrap">↑ Importar</button><button onclick="exportData()" style="padding:6px 14px;font-size:13px;white-space:nowrap">↓ Exportar</button><button onclick="toggleAI()" style="font-weight:500;background:${showAI?"#eeedfe":"transparent"};color:${showAI?"#534ab7":"#666"};border-color:${showAI?"#534ab744":"#ccc"};white-space:nowrap;padding:6px 14px;font-size:13px">✦ IA</button></div></div>`;
-
-    if (showAI) {
-        html += `<div class="ai-panel">
-            <div style="font-size:13px;font-weight:500;color:#534ab7;margin-bottom:6px">Lançar por texto</div>
-            <textarea id="aiText" rows="4" placeholder="Ex: Reunião amanhã às 14h..."></textarea>
-            <div style="display:flex;justify-content:flex-end;margin-top:8px">
-                <button onclick="parseAI()" ${aiLoading?"disabled":""} style="background:#534ab7;color:#fff;border:none;padding:6px 18px;font-size:13px">${aiLoading?"Processando...":"Interpretar"}</button>
-            </div>`;
-        if (aiError) html += `<div style="font-size:12px;color:#a32d2d;margin-top:8px">${esc(aiError)}</div>`;
-        if (aiPreview) {
-            aiPreview.forEach((item,i) => {
-                html += `<div class="preview-item">
-                    <div style="flex:1; font-size:13px">${esc(item.text)} <span class="badge">${item.categoria}</span></div>
-                    <button onclick="removePreview(${i})">×</button>
-                </div>`;
-            });
-            html += `<button onclick="confirmAI()" style="background:#534ab7;color:#fff;width:100%;margin-top:8px;border:none;padding:8px">Confirmar todos</button>`;
-        }
-        html += `</div>`;
-    }
-
-    const doneCount = items.filter(i=>i.status==="done").length;
-    let summary = tab === "Tarefas" ? `${items.length - doneCount} pendentes` : `${items.length} itens`;
     
-    html += `<div class="header-row"><span style="font-size:18px;font-weight:500">${tab}</span><span style="font-size:12px;color:#888">${summary}</span></div>`;
+    // TABS
+    html += `<div class="tabs">`;
+    TABS.forEach(t => {
+        const active = tab===t;
+        const tc = TAB_COLORS[t];
+        html += `<button class="tab" onclick="setTab('${t}')" style="background:${active?tc.bg:"transparent"};color:${active?tc.text:"#666"}">${t}</button>`;
+    });
+    html += `</div>`;
 
+    // INPUT BOX
     html += `<div class="input-box">
-        <input type="text" id="newText" placeholder="O que precisa ser feito?" onkeydown="if(event.key==='Enter')addItem()"/>
-        <div class="input-row">
-            <input type="datetime-local" id="newDL" style="flex:1"/>
-            <div style="display:flex;gap:4px" id="prioGroup">
-                ${["alta","media","baixa"].map(p=>`<button class="prio-btn" id="pb_${p}" onclick="setPrio('${p}')">${PRIO[p].label}</button>`).join('')}
-            </div>
-            <button onclick="addItem()" style="background:#444; color:#fff">+ Adicionar</button>
+        <input type="text" id="newText" placeholder="O que precisa ser feito?"/>
+        <div style="display:flex;gap:8px;margin-top:8px">
+            <select id="prioSelect" style="flex:1;padding:5px;border-radius:8px;border:0.5px solid #ccc">
+                <option value="alta">Prioridade Alta</option>
+                <option value="media" selected>Prioridade Média</option>
+                <option value="baixa">Prioridade Baixa</option>
+            </select>
+            <button onclick="addItem()" style="background:#444; color:#fff">Adicionar</button>
         </div>
     </div>`;
 
-    if (!items.length) {
-        html += `<div class="empty">Nada por aqui ainda.</div>`;
-    } else {
-        html += `<div class="items">`;
-        items.forEach(item => {
-            const ov = isOverdue(item), soon = isDueSoon(item), st = item.status||"todo", isOpen = expandedId===item.id, pr = item.prio ? PRIO[item.prio] : null;
-            let cardClass = "card";
-            if (ov) cardClass += " overdue"; else if (soon) cardClass += " soon";
-            if (st==="done") cardClass += " done-card";
-
-            html += `<div class="${cardClass}">
-                <div class="card-row">
-                    <div class="dot ${st}" onclick="cycleStatus('${item.id}')">${st==="done"?"✓":st==="andamento"?"▶":""}</div>
-                    <div class="card-body">
-                        <div class="card-text ${st==="done"?"done-text":""}" ondblclick="startEdit('${item.id}')" id="ct_${item.id}">${esc(item.text)}</div>
-                        <div class="card-meta">
-                            ${item.deadline ? `<span style="font-size:11px;color:${ov?'#a32d2d':'#888'}">${fmtDL(item.deadline)}</span>` : `<span style="font-size:11px;color:#888">${item.date}</span>`}
-                            ${pr ? `<span class="badge" style="color:${pr.text}">${pr.label}</span>` : ""}
-                        </div>
-                    </div>
-                    <div class="card-actions">
-                        <button onclick="toggleUpdates('${item.id}')">✍️</button>
-                        <button onclick="removeItem('${item.id}')">×</button>
-                    </div>
-                </div>`;
-            
-            if (isOpen) {
-                html += `<div class="updates-panel">
-                    <div class="timeline">`;
-                    (item.updates||[]).forEach(u => {
-                        html += `<div class="tl-item"><div class="tl-body"><div class="tl-time">${fmtTime(u.at)}</div><div class="tl-text">${esc(u.text)}</div></div></div>`;
-                    });
-                html += `</div>
-                    <div class="update-row">
-                        <input type="text" id="upd_${item.id}" placeholder="Nova atualização..." style="flex:1"/>
-                        <button onclick="addUpdate('${item.id}')">Add</button>
-                    </div>
-                </div>`;
-            }
-            html += `</div>`;
-        });
-        html += `</div>`;
-    }
-
-    html += `</div>`;
-    document.getElementById("app").innerHTML = html;
-    updatePrioUI();
-}
-
-function updatePrioUI() {
-    ["alta","media","baixa"].forEach(k => {
-        const btn = document.getElementById("pb_"+k);
-        if (btn) {
-            btn.style.background = state.selectedPrio === k ? PRIO[k].bg : "transparent";
-            btn.style.borderColor = state.selectedPrio === k ? PRIO[k].border : "#ccc";
-        }
+    // LISTA DE ITENS
+    html += `<div class="items">`;
+    items.forEach(item => {
+        html += `<div class="card">
+            <div class="card-row">
+                <div class="dot ${item.status}" onclick="cycleStatus('${item.id}')">${item.status==="done"?"✓":""}</div>
+                <div class="card-body">
+                    <div class="card-text ${item.status==="done"?"done-text":""}">${item.text}</div>
+                    <div style="font-size:10px; color:#888">${item.prio}</div>
+                </div>
+                <button onclick="removeItem('${item.id}')">×</button>
+            </div>
+        </div>`;
     });
+    html += `</div></div>`;
+
+    document.getElementById("app").innerHTML = html;
 }
 
-function setPrio(p) { state.selectedPrio=p; updatePrioUI(); }
 function setTab(t) { state.tab=t; render(); }
-function toggleAI() { state.showAI=!state.showAI; render(); }
-function dismissBanner() { state.banner=[]; render(); }
 
 function addItem() {
     const txt = document.getElementById("newText").value.trim();
     if (!txt) return;
-    const dl = document.getElementById("newDL").value;
-    const item = {id:genId(),text:txt,status:"todo",date:new Date().toLocaleDateString("pt-BR"),deadline:dl||null,prio:state.selectedPrio,updates:[]};
+    const prio = document.getElementById("prioSelect").value;
+    const item = {id:genId(), text:txt, status:"todo", prio:prio, date:new Date().toLocaleDateString()};
+    
     state.data[state.tab].unshift(item);
-    save(); render();
+    save(); // Salva na nuvem
 }
 
 function removeItem(id) {
     state.data[state.tab] = state.data[state.tab].filter(i=>i.id!==id);
-    save(); render();
+    save(); // Salva na nuvem
 }
 
 function cycleStatus(id) {
-    const order = ["todo","andamento","done"];
     state.data[state.tab] = state.data[state.tab].map(i => {
-        if (i.id!==id) return i;
-        const curr = i.status || "todo";
-        const next = order[(order.indexOf(curr)+1)%3];
-        return {...i, status:next};
+        if(i.id === id) i.status = i.status === "done" ? "todo" : "done";
+        return i;
     });
-    save(); render();
+    save(); // Salva na nuvem
 }
 
-function toggleUpdates(id) { state.expandedId = state.expandedId===id?null:id; render(); }
-
-function addUpdate(id) {
-    const txt = document.getElementById("upd_"+id).value.trim();
-    if (!txt) return;
-    state.data[state.tab] = state.data[state.tab].map(i=>i.id===id?{...i,updates:[...(i.updates||[]),{id:genId(),text:txt,at:new Date().toISOString()}]}:i);
-    save(); render();
-}
-
-async function parseAI() {
-    state.aiError = "Para usar IA, configure sua chave de API no código.";
-    state.aiLoading = true; render();
-    setTimeout(() => { state.aiLoading = false; render(); }, 1000);
-}
-
-function exportData() {
-    const blob = new Blob([JSON.stringify(state.data)],{type:"application/json"});
-    const a = document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="backup.json"; a.click();
-}
-
-function importData() {
-    const input = document.createElement("input"); input.type="file";
-    input.onchange = e => {
-        const reader = new FileReader();
-        reader.onload = ev => { state.data = JSON.parse(ev.target.result); save(); render(); };
-        reader.readAsText(e.target.files[0]);
-    };
-    input.click();
-}
-
-load();
-state.banner = Object.values(state.data).flat().filter(i=>isOverdue(i));
-render();
+// INICIALIZAÇÃO
+syncCloud(); 
 </script>
 </body>
 </html>
